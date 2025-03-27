@@ -1,9 +1,16 @@
+
+
+-- funcion No currificada F: ((a,b) -> c)
+-- funcion currificada de F: (a -> b -> c)
+
+-- funcion NO currificada a una funcion currificada
 curry :: ((a,b) -> c) -> (a -> b -> c)
 curry f x y = f (x,y)
 curry f = \x -> \y -> f (x,y)
 curry f = \x -> f (x,y)
 
 
+-- funcion currificada a una NO currificada
 uncurry :: (a->b->c) -> (a,b)-> c
 uncurry f = \ (x,y) -> f x y
 
@@ -18,8 +25,12 @@ esMayorDeEdad = (>) 17
 esMayorDeEdad = (17<)
 
 
+
+-- \x -> f (g x) "toma una x cualquiera y devuelve composicion f (g x)"
+
+-- puedo pasar x al otro lado como \x 
 (.) :: (b -> c) -> (a -> b) -> a -> c
-(.) f g c = f (g x)
+(.) f g x = f (g x)
 (.) f g = \x -> f (g x)
 
 flip :: (a -> b -> c) -> (b -> a -> c)
@@ -27,7 +38,7 @@ flip f = \x -> \y -> f y x
 flip f = \x y -> f y x
 flip f x y = f y x
 
-
+-- parentesis con $
 f (g (h x))
 f $ g $ h x
 
@@ -38,8 +49,8 @@ f $ g $ h x
 
 const :: a -> (b -> a)
 const x _ = x
-const x = \_ -> x
-const = \x -> \_-> x
+-- const x = \_ -> x
+-- const = \x -> \_-> x
 
 flip ($) 0 f
     = flip ($) f 0
