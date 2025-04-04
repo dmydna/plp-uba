@@ -96,6 +96,7 @@ deLongitudN n = filter (\x -> length x == n)
 soloPuntosFijosEnN :: Int -> [Int -> Int] -> [Int -> Int]
 soloPuntosFijosEnN = filter (if -> f n == n)
 
+
 map :: (a->b) -> [a] -> [b]
 map _ [] = []
 map f (x:xs) = f x : map f xs
@@ -108,6 +109,20 @@ reverseAnidados = reverse (map reverse)
 paresCuadrados :: [Int] -> [Int]
 paresCuadrados xs = map (\x -> if even x then x*x else x)
 
+
+{- 
+...................::: foldr :::...................
+
+foldr generaliza la recursion para cualquier funcion
+
+foldr :: func -> t -> xs -> t
+  - func es una funcion de tipo T
+  - t es el caso base de tipo T, es el VALOR INICIAL del ACUMULADOR, 
+    tambien me indica el tipo de salida 
+  - xs es una lista 
+...................................................
+-}
+
 foldr :: (a->b->c) -> b -> [a] -> b
 foldr _ z [] = z
 foldr z (x:xs) = f x (foldr f x xs)
@@ -118,11 +133,11 @@ suma [] = 0
 suma (x:xs) = x + suma xs
 
 
--- no recuerdo que era rec  
+-- rec es un acumulador cuyo valor inicial es 0
 sumar = foldr (\x rec -> x + rec) 0
 sumar = foldr (+) 0
 
--- no recuerdo que era rec  
+-- rec es una lista acumulador cuyo valor inicial es []
 filter :: (a->Bool) -> [a] -> [a]
 filter p = foldr (\x rec -> if p x then x : rec else rec) []
 
