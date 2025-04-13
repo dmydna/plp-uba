@@ -73,6 +73,9 @@ foldPoli cX cCte cSuma cProd p = case p of
   where
     rec = foldPoli cX cCte cSuma cProd
 
+
+
+
 evaluar :: Num a => a -> Polinomio a -> a
 evaluar e = foldPoli e id (+) (*)
 

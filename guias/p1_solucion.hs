@@ -14,7 +14,7 @@ normaVectorial :: Floating a => (a, a) -> a
 normaVectorial (x, y) = sqrt (x^2 + y^2)
 
 normaVectorialCurry :: Floating a => a -> a -> (a -> a -> b)
-normaVectorialCurry = \x -> \y -> normaVectorial (x, y) 
+normaVectorialCurry = \x  \y -> normaVectorial (x, y) 
 
 
 -- funcion currificada
@@ -34,12 +34,12 @@ evaluarEnCero = \f -> f 0
 dosVeces = \f -> f * f
 
 
--- flip :: (a -> b -> c) -> b -> a -> c
 -- recibe una funcion y su argumentos intercambiados, devuelve c
+flip :: (a -> b -> c) -> b -> a -> c
 
--- map :: (a -> b) -> [a] -> [b]
+
 -- recibe una funcion y una lista, devuelve c
-
+map :: (a -> b) -> [a] -> [b]
 
 -- flipAll :: [(a->b->c)] -> [(b -> a -> c)]
 -- recibe una lista de funciones con arg a y b y los swapea 
@@ -72,7 +72,7 @@ curry f = \[x] -> \[y] -> f (x, y)
 
 -- Ejercicio 3
 
-{-------------------------------------------------------------------- 
+{-
 
 foldr generaliza la recursion para cualquier funcion
 
@@ -82,7 +82,12 @@ foldr :: func -> t -> xs -> t
     me indica el tipo de salida 
   - xs es una lista 
 
---------------------------------------------------------------------}
+
+foldr :: (a -> b -> b) -> b -> [a] -> b
+foldr f z [] = z
+foldr f z (x : xs) = f x (foldr f z xs)
+
+-}
 
 
 
@@ -91,49 +96,36 @@ sum :: (Num a) => [a] -> a
 sum = foldr (+) 0
 
 -- revisar
+
+
+
+elem :: (Eq a) => a -> [a] -> Bool
+elem e = foldr (\y rec -> (e == y) || rec) False
+-- rec es una lista acumulador
+
 -- elem 3 [1, 2, 3, 4]
 -- (3 == 1) || ( (3 == 2) || ( (3 == 3) || ( (3 == 4) || False ) ) )
 
 
-elem :: (Eq a) => a -> [a] -> Bool
-elem e = foldr (\y -> \rec -> (e == y) || rec) False
--- rec es una lista acumulador
 
 (++) :: [a] -> [a] -> [a]
 (++) xs ys = foldr (:) ys xs 
 
 
--- foldr (:) [3,4] [1,2]
--- 1 -> 1 : (foldr (:) [3,4] [2]) 
--- 2 -> 2 : (foldr (:) [3,4] [])  
---   -> 2 : [3,4]                
---   -> 1 : [2,3,4]              
-
-
-
 filter :: (a -> Bool) -> [a] -> [a]
-filter func = foldr (\y \rec -> if func y then y : rec else rec) []
+filter f = foldr (\y rec -> if f y then y : rec else rec) []
 -- rec es una lista acumulador
 
 
--- foldr (\y a -> if even y then y : a else a) [] [1,2,3,4,5]
--- 1 -> if even 1 then 1 : acc else acc  --> acc = []
--- 2 -> if even 2 then 2 : acc else acc  --> acc = [2]
--- 3 -> if even 3 then 3 : acc else acc  --> acc = [2]
--- 4 -> if even 4 then 4 : acc else acc  --> acc = [4,2]
--- 5 -> if even 5 then 5 : acc else acc  --> acc = [4,2]
-
-
-
 map :: (a -> b) -> [a] -> [b]
-map = foldr (\y -> rec -> f y : rec) []
+map = foldr (\y rec -> f y : rec) []
 -- rec es una lista acumulador
 
 
 
 mejorSegún :: (a -> a -> Bool) -> [a] -> a
 mejorSegun _ [x] = x
-mejorSegun criterio = foldr1 (\y -> maximo -> if criterio y maximo then y else maximo )
+mejorSegun criterio = foldr1 (\y maximo -> if criterio y maximo then y else maximo )
 
 
 -- solucion con recursion
@@ -150,6 +142,7 @@ sumasParcialesAux (x:xs) acc = (x + acc) : sumasParciales xs (x + acc)
 sumasParciales :: Num a => [a] -> [a]
 sumasParciales [] = []
 sumasParciales xs =  foldr (\y (r:rs) -> (y + r) : (r:rs) ) [0]
+
 -- el valor inicial de (r:rs) que es una lista acumuladora es [0]
 
 
@@ -235,11 +228,9 @@ mapPares f  =  foldr(\(x, y) acc -> (f x y, f y x) : acc) []
 
 
 
--- wtf?
+
 armarPares :: [a] -> [a] -> [(a,a)] 
-armarPares xs []  = []
-armarPares [] ys  = []
-armarPares xs ys = foldr (\x rec )
+armarPares xs ys = foldr (\x (rec ys) ->  if null ys then [] else (x, head ys ) : rec(tail ys)) (const [])
 
 
 
@@ -268,7 +259,7 @@ foldNat fSucc fZero n = fSucc n (foldNat fSucc fZero (n-1))
 
 
 potenciaNat :: Integer -> Integer -> Integer
-potenciaNat base n = foldNat (\_ acc -> base * acc ) 1 n
+potenciaNat base = foldNat (\_ acc -> base * acc ) 1
 
 -- Ejercicio 10
 
@@ -348,7 +339,8 @@ cantNodos (Bin i r d) = foldAB 0 (\recI r recD -> 1 + recD + recI)
 
 -- ramas :: AB a -> b
 
--- mismaEstructura :: AB a -> AB b -> Bool
+mismaEstructura :: AB a -> AB b -> Bool
+mismaEstructura = foldAB esNil (\recIzq r recDer arbol -> not (esNil arbol) && recIzq (hijoIzquierdo arbol) && recDer (hijoDerecho arbol) )
 
 
 -- Ejercicio 14 
