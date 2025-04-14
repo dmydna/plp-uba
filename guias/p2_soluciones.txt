@@ -1,0 +1,154 @@
+## Ejercicio 4.
+---------------------------------------------------------------------
+
+1. Probar que reverse . reverse = id
+
+reverse :: [a] -> [a]
+{R0} reverse = foldl (flip (:)) []
+
+{R1} reverse = foldr (\x rec -> rec ++ (x:[])) []
+
+(++) :: [a] -> [a] -> [a]
+(++) xs ys = foldr (:) ys xs
+
+
+Recordemos:
+foldr :: (a -> b -> b) -> b -> [a] -> b
+{F0} foldr f z [] = z
+{F1} foldr f z (x:xs) = f x (foldr f z xs)
+
+
+-- Por propiedad de extensionalidad qvq ∀xs::[a] . (reverse . reverse xs = id xs)
+
+-- Caso Base -- 
+P([]) = reverse . reverse [] = id []
+
+= reverse (reverse [])
+= reverse []
+= []
+
+id [] = [] 
+
+-- Paso Inductivo -- 
+∀xs::[a] . P(xs) ⇒ P(x:xs)
+
+- P(xs) = HI = reverse . reverse xs = id xs
+- P(x:xs) = reverse . reverse x:xs = id x:xs
+
+reverse . reverse (x:xs) = id (x:xs)
+= reverse (reverse x:xs) 
+{R1} = reverse (foldr (\x rec -> rec ++ (x:[]) ) [] )(x:xs)
+{F1} = reverse ( (\x rec -> rec ++ (x:[]))  x  foldr (\x rec -> rec ++ (x:[])) [] xs )
+{R1} = reverse ( (\x rec -> rec ++ (x:[])) (reverse xs) )
+{β} = reverse ( (\rec -> rec ++ (x:[]) )(reverse xs) )
+{β} = reverse ( reverse xs ++ (x:[]) )
+{..} = reverse (x : reverse xs)
+{TODO}= x : reverse ( reverse xs ) 
+{HI} = x : id xs 
+  = id (x:xs)
+
+
+-- TODO
+Demostrar reverse (x : reverse xs) = x : reverse (reverse xs) 
+
+
+
+2. Probar que append = (++)
+
+append :: [a] -> [a] -> [a]
+{A0} append xs ys = foldr (:) ys xs
+
+(++) :: [a] -> [a] -> [a]
+{++} (++) xs ys = foldr (:) ys xs
+
+-- Por principio de extensionalidad sobre listas ∀xs::[a]. ∀ys::[a] . append xs ys = (++) xs ys.
+
+-- Por principio de extensionalidad funcional pruebo que append xs ys = (++) xs ys
+
+-- Caso Base : P([])
+
+qvq append xs [] = (++) xs [] 
+ = append xs []
+ = xs
+ = (++) xs []
+
+
+-- Paso Inductivo
+
+P(xs) ⇒ P(x:xs)
+
+P(xs)  = append xs ys = (++) xs ys
+P(x:x) = append x:xs ys = (++) x:xs ys
+
+append x:xs ys
+{++}  = foldr (:) ys x:xs
+   = (++) x:xs ys
+
+
+
+3. Probar que map id = id
+
+-- TODO
+
+4. Probar que:  ∀ f::a->b . ∀ g::b->c . map (g . f) = map g . map f
+
+-- TODO
+
+5. Probar que:  ∀ f::a->b . ∀ p::b->Bool . map f . filter (p . f) = filter p . map f
+
+-- TODO
+
+6. Probar que:  ∀ f::a->b . ∀ e::a . ∀ xs::[a] . ((elem e xs) ⇒ (elem (f e) (map f xs)))
+(asumiendo Eq a y Eq b)
+
+-- TODO
+
+
+## Ejercicio 5 
+---------------------------------------------------------------------
+zip :: [a] -> [b] -> [(a,b)]
+{Z0} zip = foldr (\x rec ys -> if null ys
+                then []
+                else (x, head ys) : rec (tail ys))
+                (const [])
+
+zip’ :: [a] -> [b] -> [(a,b)]
+{Z’0} zip’ [] ys = []
+{Z’1} zip’ (x:xs) ys = if null ys then [] else (x, head ys):zip’ xs (tail ys)
+
+Demostrar que zip = zip’ utilizando inducción estructural y el principio de extensionalidad.
+
+-- Solucion : TODO
+
+
+
+
+
+## Ejercicio 12
+---------------------------------------------------------------------
+
+derivado :: Num a => Polinomio a -> Polinomio a
+derivado poli = case poli of
+    X        -> Cte 1
+    Cte _    -> Cte 0
+    Suma p q -> Suma (derivado p) (derivado q)
+    Prod p q -> Suma (Prod (derivado p) q) (Prod (derivado q) p)
+
+sinConstantesNegativas :: Num a => Polinomio a -> Polinomio a
+sinConstantesNegativas = foldPoli True (>=0) (&&) (&&)
+
+esRaiz :: Num a => a -> Polinomio a -> Bool
+esRaiz n p = evaluar n p == 0
+
+
+Demostrar las siguientes propiedades:
+
+1. Num a => ∀ p::Polinomio a . ∀ q::Polinomio a . ∀ r::a . (esRaiz r p ⇒ esRaiz r (Prod p q))
+2. Num a => ∀ p::Polinomio a . ∀ k::a . ∀ e::a .
+evaluar e (derivado (Prod (Cte k) p)) = evaluar e (Prod (Cte k) (derivado p))
+3. Num a => ∀ p::Polinomio a. (sinConstantesNegativas p⇒sinConstantesNegativas (derivado p))
+
+La recursión utilizada en la definición de la función derivado ¿es estructural, primitiva o ninguna de las dos?
+
+-- Solucion:  TODO
+
