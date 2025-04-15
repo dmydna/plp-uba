@@ -86,13 +86,97 @@ append x:xs ys
 
 
 
-3. Probar que map id = id
+3. Probar que map id = id         
 
--- TODO
+--- REVISAR ---
+
+map :: (a -> b) -> [a] -> [b]
+{M} map = foldr (\y rec -> f y : rec) []
+
+foldr :: (a -> b -> b) -> b -> [a] -> b
+{F0} foldr f z [] = z
+{F1} foldr f z (x:xs) = f x (foldr f z xs)
+
+Por principio de extensionalidad sobre listas. ∀xs::[a] . map id xs = id xs
+
+Por principio de induccion estructural basta ver que: ∀x::[a] map id xs = id xs
+
+-- Case Base : P([]) 
+
+P([]) ≡ map id [] = id []
+
+   = map id [] 
+   = map []
+   = []
+   = id []
+   = []
+
+-- Caso Inductivo : P(xs) ⇒ P(x:xs)
+
+HI  : P(xs)   ≡ map id xs = id xs
+qvq : P(x:xs) ≡ map id (x:xs) = id (x:xs)
+
+P(x:xs) ≡ map id (x:xs)
+{M} = foldr (\y rec -> id y : rec) []
+{β} = (\y rec -> id y : rec) (x:xs)
+{β} = (\rec -> id x : rec) (xs)
+{β} = id (x:xs)
+
+
+
 
 4. Probar que:  ∀ f::a->b . ∀ g::b->c . map (g . f) = map g . map f
 
--- TODO
+
+--- REVISAR  ---
+
+map :: (a -> b) -> [a] -> [b]
+{M} map = foldr (\y rec -> f y : rec) []
+
+foldr :: (a -> b -> b) -> b -> [a] -> b
+{F0} foldr f z [] = z
+{F1} foldr f z (x:xs) = f x (foldr f z xs)
+
+{M0} map f [] = []
+{M1} map f (x : xs) = f x : map f xs
+
+
+
+-- Por principio de extensionalidad de lista . ∀xs::[a] . map (g . f) xs = map g (map f xs)
+
+-- Para probar por induccion estructural, ∀xs::[a] . map (g . f) xs = map g (map f xs) vasta ver que:
+  - P([])
+  - ∀x::a . ∀xs::[a] . P(x)⇒ P(x:xs)
+
+-- Case Base: P([])
+
+map (g . f) [] = map g (map f [])
+[] = map g []
+[] = []
+
+-- Caso Inductivo: P(x) ⇒ P(x:xs) 
+
+HI  : P(xs)   ≡ map (g . f) xs = map g (map f xs)
+qvq : P(x:xs) ≡ map (g . f) x:xs = map g (map f x:xs)
+
+P(x:xs) ≡ map (g . f) x:xs
+{M} = foldr (\y rec -> (f . g) y : rec) [] x:xs
+  = (\y rec -> (f . g) y : rec) [] x:xs
+  = (\y -> \rec -> (f . g) y : rec) [] x:xs
+  = (\rec -> (f . g) x : rec)(xs)
+  = (f . g) x : xs
+
+
+
+
+
+
+
+
+
+
+
+
 
 5. Probar que:  ∀ f::a->b . ∀ p::b->Bool . map f . filter (p . f) = filter p . map f
 
@@ -118,10 +202,36 @@ zip’ :: [a] -> [b] -> [(a,b)]
 
 Demostrar que zip = zip’ utilizando inducción estructural y el principio de extensionalidad.
 
--- Solucion : TODO
+-- Solucion:
 
 
+-- Por principio de extensionalidad funcional basta ver que ∀xs::[a] . ∀ys::[a]. 
 
+-- Por principio de induccion estructural sobre listas 
+
+P(xs) : zip xs ys = xs ys
+
+-- Caso Base: P([])
+
+P(xs) ≡ zip xs ys = zip’ xs ys
+
+P([]) ≡ zip [] ys
+ {Z0} =  foldr (\x rec zs -> if null zs then [] else (x, head zs) : rec (tail zs)) (const []) [] ys
+ {F0} = (const[]) ys
+    = [] 
+ {Z'O} = zip' [] ys
+
+
+-- Paso Inductivo: P(x) ⇒ P(x:xs)
+
+HI  :  P(xs) = zip xs ys = zip’ xs ys
+qvp :  P(x:xs) = zip x:xs ys = zip’ x:xs ys
+
+P(x:xs) ≡ zip x:xs ys 
+{Z0} =  foldr (\x rec ys -> if null ys then [] else (x, head zs) : rec (tail zs)) (const []) [] ys
+  = 
+
+ 
 
 
 ## Ejercicio 12

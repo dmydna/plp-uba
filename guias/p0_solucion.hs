@@ -2,16 +2,37 @@ module Funcional where
 
 -- EJERCICIO 1::..
 
--- null: tipo nulo
+{-
+null: tipo nulo
+
+head :: [a] -> a
+devuelve el primer elemento de una secuencia
+
+last :: [a] -> a
+devuelve el ultimo elemento de una secuencia
+
+tail :: [a] -> [b]
+devuelve la lista sin el primer elemento
+
+reverse :: [a] -> [a]
+devuelve la lista en orden inverso cada elemento
+
+elem :: [a] -> a -> Bool
+
+concat :: [a] -> [b] -> [b]
+
+drop :: 
+
+-}
+-- 
 -- head: devuelve el primer elemento de una secuencia
 -- tails: devuelve la secuencia sin su primer elemento 
 -- init:
--- last:
+-- last:: [a] -> a
+-- obtiene el ultimo elemento de una lista
 -- drop:
 -- (++): concatena dos secuencias
 -- concat:
--- reverse:
--- elem:
 
 -- EJERCICIO 2::..
 
