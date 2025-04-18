@@ -84,10 +84,15 @@ foldr :: func -> t -> xs -> t
 
 
 foldr :: (a -> b -> b) -> b -> [a] -> b
-foldr f z [] = z
-foldr f z (x : xs) = f x (foldr f z xs)
+foldr f acc [] = acc
+foldr f acc (x : xs) = f x (foldr f acc xs)
 
 -}
+
+
+foldr :: (a -> b -> b) -> b -> [a] -> b
+foldr f acc [] = z
+foldr f acc (x : xs) = f x (foldr f acc xs)
 
 
 
