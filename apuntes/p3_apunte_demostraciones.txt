@@ -201,7 +201,7 @@ maximum :: Ord a => [a] -> a
 {M1} maximum (x:y:ys) = if x < maximum (y:ys) then maximum (y:ys) else x
 
 
-Probar que Ord a ⇒ ∀e::a . ∀ys::[a] . (elem e ys ) e ⇒ maximum ys)
+Probar que Ord a ⇒ ∀e::a . ∀ys::[a] . (elem e ys ) ⇒ e ≤ maximum ys)
 
 -- Sabemos que valen Eq a y Ord a. Queremos ver que, para toda lista ys, vale:
 
@@ -211,22 +211,27 @@ P(ys) = ∀e::a . (elem e ys ⇒ e ≤ maximum ys)
    ▶ P([])
    ▶ ∀x::a . P(xs)⇒ P(x:xs) 
 
--- Caso Base --
+-- Caso Base: ∀e::a . P(xs == [])
 
-P([]) = ∀e::a . (elem e []) ⇒ e ≤ maximum [])
--- Recuerdo: {HI} = P(ys)
+P([]) =  (elem e []) ⇒ e ≤ maximum [])
+      =   False      ⇒ e ≤ maximum
+      =   True 
 
-P(ys) = ∀e::a . elem e ys ⇒ e ≤ maximum ys queremos ver que vale P(y:ys) 
+-- Caso Inductivo: P(xs == x:xs)
 
-{HI} = P(ys) = ∀e::a . elem e ys ⇒ e ≤ maximum ys
-P(y:ys) = ∀e::a . elem e (y:ys) ⇒ e ≤ maximum (y:ys)
+HI:   elem e ys ⇒ e ≤ maximum ys 
+
+Sabemos que vale P(ys) por HI y queremos ver que vale P(y:ys):
+
+P(ys)   =  ∀e::a . elem e ys ⇒ e ≤ maximum ys 
+P(y:ys) =  elem e ys ⇒ e ≤ maximum ys
 
 Sea e::a talque True = elem e (y:ys) qvq e ≤ maximum (y:ys)
 -- Por el lema de generacion de listas:
-    (A) ys = []
-    (B) ∃ z::a, za::[a] tales que ys = (z:zs)
+    - (A) ys = []
+    - (B) ∃ z::a, zs::[a] tales que ys = (z:zs)
 
--- caso(A) --
+-- caso(A) : (ys == [])
 
     qvq:  
     e ≤ maximum (y:ys) 
@@ -242,12 +247,23 @@ Sea e::a talque True = elem e (y:ys) qvq e ≤ maximum (y:ys)
 
   -- entonces e = y ⇒ e ≤ y
 
+
+----- obs:
+    True = elem e (y:ys)    qvq  e ≤ maximum (y:ys)
+    ≡ (e == y) || elem e [] qvq  e ≤ maximum (y:[])
+    ≡ (e == y) || False     qvq  e ≤ maximum [y]
+    ≡ (e == y)              qvq  e ≤ y
+     
+     entonces e = y ⇒ e ≤ y
+------
 -- caso(B) --
 
+
     qvq e ≤ maximum (y:ys) 
-     ≡ e ≤ maximum (y:z:zs) 
-     ≡ e ≤ if y < maximum (z:zs) then maximum (z:zs) else y 
-     ≡ e ≤ if y < (maximum ys) then maximum (maximum ys) else y = (☆)
+      ≡ e ≤ maximum (y:z:zs) 
+      ≡ e ≤ if y < maximum (z:zs) then maximum (z:zs) else y 
+      ≡ e ≤ if y < (maximum ys) then maximum (maximum ys) else y 
+      = (☆)
 
     por el lema de gen de Bool
         (B1) y < maximum ys = True
@@ -255,27 +271,27 @@ Sea e::a talque True = elem e (y:ys) qvq e ≤ maximum (y:ys)
 
     -- caso(B1)
 
-    (☆) ≡ e ≤ if True then maximum ys else y
-        ≡ e ≤ maximum ys
-   {HI} ≡ P(ys) = ∀e::a . elem ys ⇒ e ≤ maximum ys 
+        (☆)
+       ≡ e ≤ if True then maximum ys else y
+       ≡ e ≤ maximum ys
 
-True = elem e (y:ys) = (e == y) || elem e ys 
+
+    True = elem e (y:ys) = (e == y) || elem e ys 
 
     por el lema de gen de Bool
-        (B11) (e == ys) = True
-        (B12) (e == y)  = False
+        (B1.1) (e == y) = True
+        (B1.2) (e == y) = False
 
-    -- caso(B11)  
+    -- caso(B1.1)  
          (e=y) entonces lo que quiero ver es  que (☆) y ≤ maximo ys
-         Por (H1) (B1) Vale (y < maximum ys) y por lo tanto (y ≤ maximum ys)
+         Por HI, (B1) Vale (y < maximum ys) y por lo tanto (y ≤ maximum ys)
     
-    -- caso(B12) 
+    -- caso(B1.2) 
          (e==y) = False entonces
           True  = (e==y) || elem e ys 
-                = False || elem e ys 
+                = False  || elem e ys 
                 = elem e ys
 
-    {H1} = P(ys) = ∀e::a . elem e ys ⇒ e ≤ maximum ys
     por HI, vale e ≤ maximum ys (☆)
 
     -- Caso(B2)
